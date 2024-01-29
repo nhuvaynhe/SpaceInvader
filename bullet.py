@@ -2,34 +2,39 @@
 import pygame
 
 class Bullet():
-    def __init__(self): 
-        self.bullet_width  = 5
+    def __init__(self, color, direction, speed): 
         self.bullet_height = 10
-        self.bullet_speed  = 5
-        self.color         = 'green'
+        self.bullet_width  = 5
+        self.bullet_speed  = speed
         self.direction     = 1
-        self.bullets       = []
+        self.color         = color
+        self.direction     = direction
         self.screen        = None
+        self.bullets       = []
+
+    def remove(self, bullet):
+        return self.bullets.remove(bullet)
+
 
     def update(self):
         for bullet in self.bullets:
-            x, y = bullet
             bullet[1] -= self.bullet_speed * self.direction
+
+            if bullet[1] > 1280 or bullet[1] < 0:
+                self.remove(bullet)
 
         self.draw()
 
     def draw(self):
         for bullet in self.bullets:
-            x, y       = bullet
+            x, y = bullet
             pygame.draw.rect(self.screen, self.color, [x, y,
                                              self.bullet_width, 
                                              self.bullet_height])
-    def shootBullet(self, position, shift, color, direction, screen):
-        # direction    = 1 -> upward
-        self.direction = direction
-        self.color     = color
+    def shootBullet(self, position, offset_x, offset_y, screen):
         self.screen    = screen
         x, y           = position
-        bullet_positon = [x + shift - self.bullet_width/2,
-                          y - self.bullet_height]
+        bullet_positon = [x + offset_x - self.bullet_width/2,
+                          y + offset_y - self.bullet_height]
         self.bullets.append(bullet_positon)
+
