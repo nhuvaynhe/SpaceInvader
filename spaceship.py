@@ -1,24 +1,25 @@
 # spaceship.py
 import pygame
-from bullet import Bullet
 
 screen_width = 1280
 screen_height = 720
 
+
 class SpaceShip:
-    def __init__(self,screen, bullet):
-        self.ship_width    = 80
-        self.ship_height   = 20
-        self.screen        = screen
-        self.bullet        = bullet
+    def __init__(self, screen, bullet):
+        self.ship_width = 80
+        self.ship_height = 20
+        self.screen = screen
+        self.bullet = bullet
         self.ship_position = [screen_width/2 - self.ship_width/2,
-                                screen_height/2 - self.ship_height/2 + 250]
-    
+                              screen_height/2 - self.ship_height/2 + 250]
+
     def getPosition(self):
         return self.ship_position
-    
+
     def shoot(self):
-        self.bullet.shootBullet(self.ship_position, self.ship_width/2, 0, self.screen)
+        self.bullet.shootBullet(self.ship_position,
+                                self.ship_width/2, 0, self.screen)
 
     def updateBullet(self):
         self.bullet.update()
@@ -29,14 +30,13 @@ class SpaceShip:
     def drawSpaceShip(self):
         x, y = self.ship_position
         pygame.draw.rect(self.screen, 'green', [x, y,
-                                           self.ship_width, self.ship_height])
+                                                self.ship_width,
+                                                self.ship_height])
         temp_x = self.ship_width/2
         temp_y = self.ship_height/2
-        pygame.draw.rect(self.screen, 'green', [x + temp_x/2, 
-                                           y - temp_y,
-                                           temp_x, 
-                                           temp_y])
-    
+        pygame.draw.rect(self.screen, 'green',
+                         [x + temp_x/2, y - temp_y, temp_x, temp_y])
+
     def moveSpaceShip(self, dt):
         x, y = self.ship_position
         keys = pygame.key.get_pressed()
@@ -61,10 +61,12 @@ class SpaceShip:
         return False
 
     def hit(self, monster_bullet):
+        if monster_bullet == -1:
+            return False
+
         for bullet in monster_bullet:
             x, y = bullet
             if self.isHit(x, y):
                 monster_bullet.remove(bullet)
                 return True
         return False
-        

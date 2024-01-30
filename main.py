@@ -12,25 +12,29 @@ screen_width = 1280
 screen_height = 720
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption("Space Invader Game")
-        
-running        = True
-pause          = False
-dt             = 0
-bullet_monster = Bullet('red', -1, 5) # color, direction, speed
-bullet_ship    = Bullet('green', 1, 5)
-game           = GamePlay(screen, bullet_monster)
-ship           = SpaceShip(screen, bullet_ship)
-game.addMonsters(5)
+
+running = True
+pause = False
+win = False
+dt = 0
+
+bullet_monster = Bullet('red', -1, 5)  # color, direction, speed
+bullet_ship = Bullet('green', 1, 5)
+game = GamePlay(screen, bullet_monster)
+ship = SpaceShip(screen, bullet_ship)
+game.addMonsters(15)
 
 MONSTER_ATTACK = pygame.USEREVENT + 1
-pygame.time.set_timer(MONSTER_ATTACK, 600) #ms
+pygame.time.set_timer(MONSTER_ATTACK, 600)  # ms
 
-def display(displayText):
+
+def display(displayText, fontColor):
     font = pygame.font.SysFont("comicsansms", 115)
-    text = font.render(displayText, True, 'green', 'blue') 
+    text = font.render(displayText, True, fontColor, (0, 0, 0))
     textRect = text.get_rect()
     textRect.center = (screen_width // 2, screen_height // 2)
     screen.blit(text, textRect)
+
 
 while running:
     for event in pygame.event.get():
@@ -44,7 +48,7 @@ while running:
         if event.type == MONSTER_ATTACK:
             game.attack()
 
-    screen.fill((0,0,0)) # black
+    screen.fill((0, 0, 0))  # black
 
     ship.drawSpaceShip()
     game.drawMonsters()
@@ -52,18 +56,21 @@ while running:
         pause = True
 
     if pause:
-        display('You Lose')
+        if win:
+            display('You Win', 'green')
+        else:
+            display('You Lose', 'red')
     else:
         ship.moveSpaceShip(dt)
         ship.updateBullet()
         game.moveMonsters(dt)
         game.updateBullet()
-        game.hit(ship.getBulletPosition())
-        if game.win():
-            display('You Win')
+        game.handleMonsterHit(ship.getBulletPosition())
+        if game.noMonstersLeft():
+            win = True
+            pause = True
 
     pygame.display.flip()
     dt = clock.tick(60) / 1000
 
 pygame.quit()
-
