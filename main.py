@@ -2,6 +2,7 @@ import pygame
 from bullet import Bullet
 from spaceship import SpaceShip
 from gameplay import GamePlay
+from barrier import Barrier
 
 pygame.init()
 
@@ -22,6 +23,7 @@ bullet_monster = Bullet('red', -1, 5)  # color, direction, speed
 bullet_ship = Bullet('green', 1, 5)
 game = GamePlay(screen, bullet_monster)
 ship = SpaceShip(screen, bullet_ship)
+barrier = Barrier(screen, 3)
 game.addMonsters(15)
 
 MONSTER_ATTACK = pygame.USEREVENT + 1
@@ -50,7 +52,7 @@ while running:
 
     screen.fill((0, 0, 0))  # black
 
-    ship.drawSpaceShip()
+    ship.draw()
     game.drawMonsters()
     if ship.hit(game.getBulletPosition()):
         pause = True
@@ -61,11 +63,13 @@ while running:
         else:
             display('You Lose', 'red')
     else:
+        barrier.createBarriers()
         ship.moveSpaceShip(dt)
         ship.updateBullet()
         game.moveMonsters(dt)
         game.updateBullet()
         game.handleMonsterHit(ship.getBulletPosition())
+        barrier.hit(game.getBulletPosition())
         if game.noMonstersLeft():
             win = True
             pause = True

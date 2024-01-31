@@ -8,6 +8,7 @@ class GamePlay:
         self.turn = []
         self.bullet = bullet
         self.screen = screen
+        self.color = 'gray'
         self.total_monster = 0
         self.num_of_monsters_per_row = 0
         self.space_between_each_monster = 20
@@ -25,25 +26,26 @@ class GamePlay:
         for row in range(3):
             monster_row = []
             x = 6
-            y = 40 + row * 60
+            y = 60 + row * 80
             direction = 1
             for _ in range(self.num_of_monsters_per_row):
-                monster = Monster(x, y, self.screen, self.bullet)
+                monster = Monster(x, y, self.screen, self.bullet, self.color)
                 monster_row.append(monster)
-                x += monster.width + self.space_between_each_monster
+                x += monster.width * 10 + self.space_between_each_monster
             self.monster_grid.append(monster_row)
             self.turn.append(direction)
 
     def drawMonsters(self):
         for row in self.monster_grid:
             for monster in row:
-                monster.draw()
+                monster.draw(self.color)
 
     def moveMonsters(self, dt):
         for i, row in enumerate(self.monster_grid):
             if len(row) == 0:
                 continue
             if self.total_monster <= 15:
+                self.color = 'red'
                 speed = 300
             else:
                 speed = 100
