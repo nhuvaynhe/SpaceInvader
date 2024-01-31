@@ -70,6 +70,7 @@ while running:
         game.updateBullet()
         game.handleMonsterHit(ship.getBulletPosition())
         barrier.hit(game.getBulletPosition())
+        barrier.hit(ship.getBulletPosition())
         if game.noMonstersLeft():
             win = True
             pause = True
