@@ -34,7 +34,7 @@ class SpaceShip:
     def updateBullet(self):
         self.bullet.update()
 
-    def getBulletPosition(self):
+    def getBullets(self):
         return self.bullet.bullets
 
     def draw(self):

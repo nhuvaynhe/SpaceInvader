@@ -21,21 +21,30 @@ dt = 0
 
 bullet_monster = Bullet('red', -1, 5)  # color, direction, speed
 bullet_ship = Bullet('green', 1, 5)
-game = GamePlay(screen, bullet_monster)
+monsters = GamePlay(screen, bullet_monster)
 ship = SpaceShip(screen, bullet_ship)
-barrier = Barrier(screen, 3)
-game.addMonsters(15)
+barrier = Barrier(screen, 4)
+monsters.addMonsters(10)
 
 MONSTER_ATTACK = pygame.USEREVENT + 1
 pygame.time.set_timer(MONSTER_ATTACK, 600)  # ms
 
 
-def display(displayText, fontColor):
-    font = pygame.font.SysFont("comicsansms", 115)
+def display(position, displayText, fontColor, fontsize=115):
+    x, y = position
+    font = pygame.font.SysFont("comicsansms", fontsize)
     text = font.render(displayText, True, fontColor, (0, 0, 0))
     textRect = text.get_rect()
-    textRect.center = (screen_width // 2, screen_height // 2)
+    textRect.center = (x, y)
     screen.blit(text, textRect)
+
+
+def displayScore(score):
+    text = 'Your score: ' + str(score)
+    offset_x = 1200
+    offset_y = 20
+    pos = (offset_x, offset_y)
+    display(pos, text, 'green', 30)
 
 
 while running:
@@ -48,30 +57,38 @@ while running:
                 ship.shoot()
 
         if event.type == MONSTER_ATTACK:
-            game.attack()
+            monsters.attack()
 
     screen.fill((0, 0, 0))  # black
+    displayScore(monsters.monster_destroyed)
 
-    ship.draw()
-    game.drawMonsters()
-    if ship.hit(game.getBulletPosition()):
+    if ship.hit(monsters.getBullets()):
+        monsters.state = 2
         pause = True
 
+    ship.draw()
+    monsters.drawMonsters()
     if pause:
+        x = screen_width // 2
+        y = screen_height // 2
+        pos = (x, y)
         if win:
-            display('You Win', 'green')
+            display(pos, 'You Win', 'green')
         else:
-            display('You Lose', 'red')
+            display(pos, 'You Lose', 'red')
     else:
-        barrier.createBarriers()
         ship.moveSpaceShip(dt)
         ship.updateBullet()
-        game.moveMonsters(dt)
-        game.updateBullet()
-        game.handleMonsterHit(ship.getBulletPosition())
-        barrier.hit(game.getBulletPosition())
-        barrier.hit(ship.getBulletPosition())
-        if game.noMonstersLeft():
+
+        monsters.moveMonsters(dt)
+        monsters.updateBullet()
+        monsters.hit(ship.getBullets())
+
+        barrier.createBarriers()
+        barrier.hit(monsters.getBullets())
+        barrier.hit(ship.getBullets())
+
+        if monsters.noMonstersLeft():
             win = True
             pause = True
 

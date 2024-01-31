@@ -1,17 +1,38 @@
 import pygame
+import random
 
 clock = pygame.time.Clock()
 BLACK = (0, 0, 0)
 
-monster = [[0, 0, 1, 1, 1, 1, 1, 1, 0, 0],
-           [0, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-           [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-           [1, 1, 0, 0, 1, 1, 0, 0, 1, 1],
-           [1, 1, 0, 0, 1, 1, 0, 0, 1, 1],
-           [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-           [1, 1, 0, 1, 1, 1, 1, 0, 1, 1],
-           [0, 1, 1, 0, 0, 0, 0, 1, 1, 0],
-           [0, 0, 1, 1, 1, 1, 1, 1, 0, 0]]
+monster_state_1 = [[0, 0, 1, 1, 1, 1, 1, 1, 0, 0],
+                   [0, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+                   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                   [1, 1, 0, 0, 1, 1, 0, 0, 1, 1],
+                   [1, 1, 0, 0, 1, 1, 0, 0, 1, 1],
+                   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                   [1, 1, 0, 1, 1, 1, 1, 0, 1, 1],
+                   [0, 1, 1, 0, 0, 0, 0, 1, 1, 0],
+                   [0, 0, 1, 1, 1, 1, 1, 1, 0, 0]]
+
+monster_state_2 = [[0, 0, 1, 1, 1, 1, 1, 1, 0, 0],
+                   [0, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+                   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                   [1, 1, 0, 0, 1, 1, 0, 0, 1, 1],
+                   [1, 1, 0, 0, 1, 1, 0, 0, 1, 1],
+                   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                   [1, 1, 0, 0, 0, 0, 0, 0, 1, 1],
+                   [0, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+                   [0, 0, 1, 1, 1, 1, 1, 1, 0, 0]]
+
+monster_state_3 = [[0, 0, 1, 1, 1, 1, 1, 1, 0, 0],
+                   [0, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+                   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                   [1, 1, 0, 0, 1, 1, 0, 0, 1, 1],
+                   [1, 1, 0, 0, 1, 1, 0, 0, 1, 1],
+                   [1, 0, 1, 1, 1, 1, 1, 1, 0, 1],
+                   [1, 1, 0, 0, 0, 0, 0, 0, 1, 1],
+                   [0, 1, 1, 0, 0, 0, 0, 1, 1, 0],
+                   [0, 0, 1, 1, 1, 1, 1, 1, 0, 0]]
 
 
 class Monster():
@@ -20,15 +41,19 @@ class Monster():
         self.height = 6
         self.screen = screen
         self.bullet = bullet
-        self.matrix = monster
+        self.state = [monster_state_1,
+                      monster_state_2,
+                      monster_state_3]
+        self.matrix = None
         self.color = color
         self.delay_attack = 3000  # 3 seconds
         self.spawn_position = [x, y]
 
-    def getBulletPosition(self):
+    def getBullets(self):
         return self.bullet.bullets
 
-    def draw(self, arg):
+    def draw(self, arg, state):
+        self.matrix = self.state[state]
         self.color = arg
         x, y = self.spawn_position
         for row in range(9):

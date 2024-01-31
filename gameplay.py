@@ -9,16 +9,18 @@ class GamePlay:
         self.bullet = bullet
         self.screen = screen
         self.color = 'gray'
+        self.state = 0
         self.total_monster = 0
         self.num_of_monsters_per_row = 0
         self.space_between_each_monster = 20
+        self.monster_destroyed = 0
 
-    def getBulletPosition(self):
+    def getBullets(self):
         if len(self.monster_grid) == 0:
             return -1
         for row in self.monster_grid:
             for monster in row:
-                return monster.getBulletPosition()
+                return monster.getBullets()
 
     def addMonsters(self, num_of_monsters):
         self.num_of_monsters_per_row = num_of_monsters
@@ -38,14 +40,21 @@ class GamePlay:
     def drawMonsters(self):
         for row in self.monster_grid:
             for monster in row:
-                monster.draw(self.color)
+                monster.draw(self.color, self.state)
 
     def moveMonsters(self, dt):
         for i, row in enumerate(self.monster_grid):
             if len(row) == 0:
                 continue
-            if self.total_monster <= 15:
+            if self.total_monster <= 5:
                 self.color = 'red'
+                self.bullet.bullet_speed = 10
+                speed = 1000
+                self.state = 2
+            elif self.total_monster <= 15:
+                self.color = 'orange'
+                self.state = 2
+                self.bullet.bullet_speed = 7
                 speed = 300
             else:
                 speed = 100
@@ -53,6 +62,7 @@ class GamePlay:
             x2, _ = row[0].spawn_position
             if x1 >= 1220 or x2 <= 5:
                 self.turn[i] *= -1
+                self.state = 0
                 down = 1
             else:
                 self.turn[i] *= 1
@@ -89,10 +99,12 @@ class GamePlay:
             for monster in row:
                 if monster.hit(x, y):
                     self.removeMonster(monster)
+                    self.monster_destroyed += 1
+                    self.state = 1
                     return True
         return False
 
-    def handleMonsterHit(self, ship_bullet):
+    def hit(self, ship_bullet):
         for bullet in ship_bullet:
             x, y = bullet
             if self.isMonsterHit(x, y):

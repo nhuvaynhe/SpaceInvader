@@ -16,8 +16,8 @@ barrier = [[0, 0, 0, 0, 1, 1, 0, 0, 0, 0],
 
 class Barrier:
     def __init__(self, screen, num_of_barriers):
-        self.width = 15
-        self.height = 12
+        self.width = 20
+        self.height = 10
         self.matrix = []
         self.screen = screen
         self.barriers = []
@@ -40,8 +40,8 @@ class Barrier:
 
     def createBarriers(self):
         for i in range(self.num_of_barriers):
-            offset_x = 300 + 300 * i
-            offset_y = 400
+            offset_x = 100 + 300 * i
+            offset_y = 450
 
             barrier_offset = [offset_x, offset_y]
             self.barriers.append(barrier_offset)
@@ -65,9 +65,12 @@ class Barrier:
         return False
 
     def hit(self, bullets):
+        if bullets == -1:
+            return
+
         for bullet in bullets:
             x, y = bullet
-            if 400 <= y <= 520:
+            if 450 <= y <= 450 + 10 * self.height:
                 for i in range(len(self.barriers)):
                     offset_x, _ = self.barriers[i]
                     if offset_x <= x <= offset_x + 10 * self.width:
